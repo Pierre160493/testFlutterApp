@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "336622508205",
+    "firebase_url": "https://openhattrick-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "openhattrick",
+    "storage_bucket": "openhattrick.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336622508205:android:d5e751fb983bbc5c500e24",
+        "android_client_info": {
+          "package_name": "com.example.test_flutter_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARCsQjho3OmS1vQxgZbfQvV0aqgfpQbz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
