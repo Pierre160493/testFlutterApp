@@ -1,16 +1,14 @@
-# test_flutter_app
+todo
 
-A new Flutter project.
+multiple univers with different speed
+veteran 1x: one year RL = one year in game
+normal 7x:
+young 28x:
 
-## Getting Started
+possibility to be a player, same as a normal player but you cant be injured and start strong at 15 years and 0 days (either perfect or you choose where to allocate points)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+financing multiple services:
+- young team scanners with possibility of poaching other trams young players
+- medical facilities
+- supporters influence
+- media influence
