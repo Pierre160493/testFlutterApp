@@ -72,3 +72,48 @@ def makeuppercase(
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.reference.update({"uppercase": upper})
+
+@https_fn.on_request()
+def createPlayer(req: https_fn.Request) -> https_fn.Response:
+    """Player creation
+    Mandatory: age
+    Optional: club_id, name, surname
+    """
+    # Grab the text parameter.
+    age = req.args.get("age")
+    if age is None:
+        return https_fn.Response("Oups... age parameter is mandatory, we found nothing", status=400)
+    try: #try cast as float
+        float(age)
+        #float(age.str.replace(',','.')) #Transform comma with dot (Vive la France !)
+    except ValueError:
+        return https_fn.Response(f"Oups... age parameter cannot be cast as a number ==> input was [{age}]", status=400)
+    age = float(age)
+    if age < 15 or age >= 100:
+        return https_fn.Response(f"age must be between 15 and 99 ==> Input was {age}", status=400)
+    club_id = req.args.get("club_id")
+    if club_id is None:
+        club_id = 0 #Then the player doesn't have any club
+    name = req.args.get("name")
+    if name is None:
+        name = "testName"
+    surname = req.args.get("surname")
+    if surname is None:
+        surname = "testSurName"
+
+
+    firestore_client: google.cloud.firestore.Client = firestore.client()
+
+    # Push the new message into Cloud Firestore using the Firebase Admin SDK.
+    _, doc_ref = firestore_client.collection("players").add(
+        {
+            "strName": name,
+            "strSurName": surname,
+            "douAge": age,
+            "club_id": club_id,
+            "creation_date": firestore.SERVER_TIMESTAMP
+        }
+    )
+
+    # Send back a message that we've successfully written the message
+    return https_fn.Response(f"Successfully created player with id {doc_ref.id}.")
