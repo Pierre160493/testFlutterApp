@@ -1,10 +1,14 @@
+import 'dart:math';
+
+import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-/*void main() {
-  runApp(const MyApp());
-}*/
 
 void main() async {
 
@@ -47,6 +51,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -68,7 +73,45 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  Future<void> _incrementCounter() async {
+
+    // Connexion à la BDD Firestore Database
+    var db = FirebaseFirestore.instance;
+    // Create a new user with a first and last name
+    final user = <String, dynamic>{
+      "first": "Ada",
+      "last": "Lovelace",
+      "born": 1815
+    };
+    // Add a new document with a generated ID
+    db.collection("users").add(user).then((DocumentReference doc) =>
+        print('DocumentSnapshot added with ID: ${doc.id}'));
+
+
+    // Ecriture dans la BDD Realtime Database
+    DatabaseReference _testRef = FirebaseDatabase.instance.ref().child("test");
+    _testRef.set("Hello World ${Random().nextInt(100)}");
+
+
+    // Appel des fonctions sur serveur
+
+    try {
+      final result = await FirebaseFunctions.instance.httpsCallable('addMessage').call();
+    } on FirebaseFunctionsException catch (error) {
+      print(error.code);
+      print(error.details);
+      print(error.message);
+    }
+
+    HttpsCallable callable =
+    FirebaseFunctions.instance.httpsCallableFromUrl(
+      'https://addmessage2-hqe5g73yoq-uc.a.run.app/?text=2',
+      options: HttpsCallableOptions(
+        timeout: const Duration(seconds: 5),
+      ),
+    );
+    callable.call();
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
@@ -78,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
