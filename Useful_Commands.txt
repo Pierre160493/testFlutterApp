@@ -1,0 +1,8 @@
+Useful Commands
+
+Flutter
+  flutter doctor
+
+
+Firebase
+  firebase emulators:start
