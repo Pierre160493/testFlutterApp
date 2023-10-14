@@ -3,6 +3,7 @@
 # Deploy with `firebase deploy`
 
 import random
+from datetime import datetime
 from firebase_functions import firestore_fn, https_fn
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
@@ -165,6 +166,7 @@ def createPlayer(req: https_fn.Request) -> https_fn.Response:
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Successfully created [{FirstName} {LastName.uppercase()}] with id {doc_ref.id}.")
 
+def createPlayer(FirstName, LastName, Age, IdClub):
 
 ############################################################################################################
 ############################################################################################################
@@ -176,6 +178,7 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
     Optional: NameClub
 
     http://127.0.0.1:5001/openhattrick/us-central1/createClub/?Country=France&NameClub=FC%20Bordeaux
+    https://createclub-hqe5g73yoq-uc.a.run.app/?Country=France
     """
 
     firestore_client: google.cloud.firestore.Client = firestore.client()
@@ -230,6 +233,7 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
         {
             "Country": Country,
             "Name": NameClub,
+            "isBot": True,
             "TeamSpirit": 60,
             "TeamConfidence": 60,
             "Money": 250000,
@@ -248,8 +252,134 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
             "DateCreation": firestore.SERVER_TIMESTAMP
         }
     )
+    IdClub = doc_ref.id #Id of the new created club
 
+###### Create Players
+    strCollection1 = "NameGenerator"
+    strCollection2 = "Players"
+    doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2) #NameGenerator/France/Players
+    docs = doc_ref.get()
+    n_docs = len([doc for doc in docs])
 
+    lisPlayers = []
+    NumberOfPlayers = 23 #Number of players to create for this new club
+### Name Generation
+    for i in range(NumberOfPlayers):
+        FirstName = None
+        FieldFirstName = "FirstName"
+        while FirstName is None:
+            random_index = random.randint(0, n_docs - 1)
+            rand_doc = docs[random_index]
+            if rand_doc.exists:
+                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
+                data = rand_doc.to_dict()
+                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
+                if FieldFirstName in data:
+                    # Field exists in the document
+                    FirstName = data[FieldFirstName]
+
+        LastName = None
+        FieldLastName = "LastName"
+        while LastName is None:
+            random_index = random.randint(0, n_docs - 1)
+            rand_doc = docs[random_index]
+            if rand_doc.exists:
+                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
+                data = rand_doc.to_dict()
+                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
+                if FieldLastName in data:
+                    # Field exists in the document
+                    LastName = data[FieldLastName]
+        
+        if i < 2: #2 GoalKeepers
+            Stats = {
+                "GoalKeeping": 30 + random() * 20,
+                "Defense": 15 + random() * 10,
+                "Passing": 15 + random() * 10,
+                "PlayMaking": 10 + random() * 10,
+                "Winger": 10 + random() * 10,
+                "Scoring": 10 + random() * 10,
+                "SetPieces": 20 + random() * 20,
+            }
+        elif i < 6: # 4 Central Defenders
+            Stats = {
+                "GoalKeeping": 0 + random() * 10,
+                "Defense": 30 + random() * 20,
+                "Passing": 20 + random() * 20,
+                "PlayMaking": 10 + random() * 10,
+                "Winger": 10 + random() * 10,
+                "Scoring": 10 + random() * 10,
+                "SetPieces": 0 + random() * 10,
+            }
+        elif i < 10: # 4 Backs
+            Stats = {
+                "GoalKeeping": 0 + random() * 10,
+                "Defense": 25 + random() * 20,
+                "Passing": 20 + random() * 10,
+                "PlayMaking": 10 + random() * 10,
+                "Winger": 25 + random() * 20,
+                "Scoring": 10 + random() * 10,
+                "SetPieces": 10 + random() * 10,
+            }
+        elif i < 14: # 4 Midfielders
+            Stats = {
+                "GoalKeeping": 0 + random() * 10,
+                "Defense": 10 + random() * 10,
+                "Passing": 20 + random() * 20,
+                "PlayMaking": 20 + random() * 20,
+                "Winger": 10 + random() * 10,
+                "Scoring": 10 + random() * 10,
+                "SetPieces": 10 + random() * 10,
+            }
+        elif i < 18: # 4 Wingers
+            Stats = {
+                "GoalKeeping": 0 + random() * 10,
+                "Defense": 10 + random() * 10,
+                "Passing": 20 + random() * 20,
+                "PlayMaking": 10 + random() * 10,
+                "Winger": 30 + random() * 20,
+                "Scoring": 10 + random() * 10,
+                "SetPieces": 10 + random() * 10,
+            }
+        else: # 5 Strikers
+            Stats = {
+                "GoalKeeping": 0 + random() * 10,
+                "Defense": 10 + random() * 10,
+                "Passing": 20 + random() * 20,
+                "PlayMaking": 10 + random() * 10,
+                "Winger": 10 + random() * 10,
+                "Scoring": 30 + random() * 20,
+                "SetPieces": 10 + random() * 10,
+            }
+        
+        Age = random.uniform(17, 35) # Players age randomly generated
+        # 1 game year = 16 real life weeks = 112 real life days
+        DateBirth = datetime.now()# - datetime()
+
+        lisPlayers.append(
+            {
+                "FirstName": FirstName,
+                "LastName": LastName,
+                "Country": Country,
+                "Age": Age,
+                "DateBirth": DateBirth,
+                "Club": {
+                    "IdClub": IdClub,
+                    "Name": NameClub,
+                    "DateStart": firestore.SERVER_TIMESTAMP
+                },
+                "Salary": 500,
+                "Stats": Stats,
+                "OtherStats": {
+                    "Experience": 60,
+                    "Loyalty": 60,
+                    "Stamina": 60,
+                    "Form": 60
+                }
+            }
+        )
+
+    _, doc_ref = firestore_client.collection("Players").add(lisPlayers)
 
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Successfully created [{NameClub}] with id {doc_ref.id}.")
