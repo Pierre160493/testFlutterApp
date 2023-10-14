@@ -9,6 +9,7 @@ if defined _OLD_CODEPAGE (
 )
 
 set VIRTUAL_ENV=C:\Users\pgranger\git\testFlutterApp\functions\venv
+rem set VIRTUAL_ENV=C:\Users\pierr\git\testFlutterApp\functions\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

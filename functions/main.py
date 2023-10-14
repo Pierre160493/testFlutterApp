@@ -2,6 +2,7 @@
 # To get started, simply uncomment the below code or create your own.
 # Deploy with `firebase deploy`
 
+import random
 from firebase_functions import firestore_fn, https_fn
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
@@ -140,26 +141,107 @@ def createPlayer(req: https_fn.Request) -> https_fn.Response:
     club_id = req.args.get("club_id")
     if club_id is None:
         club_id = 0 #Then the player doesn't have any club
-    name = req.args.get("name")
-    if name is None:
-        name = "testName"
-    surname = req.args.get("surname")
-    if surname is None:
-        surname = "testSurName"
+    FirstName = req.args.get("FirstName")
+    if FirstName is None:
+        FirstName = "testFirstName"
+    LastName = req.args.get("LastName")
+    if LastName is None:
+        LastName = "testLastName"
 
 
     firestore_client: google.cloud.firestore.Client = firestore.client()
 
     # Push the new message into Cloud Firestore using the Firebase Admin SDK.
-    _, doc_ref = firestore_client.collection("players").add(
+    _, doc_ref = firestore_client.collection("Players").add(
         {
-            "strName": name,
-            "strSurName": surname,
+            "FirstName": FirstName,
+            "LastName": LastName,
             "douAge": age,
             "club_id": club_id,
-            "creation_date": firestore.SERVER_TIMESTAMP
+            "DateCreation": firestore.SERVER_TIMESTAMP
         }
     )
 
     # Send back a message that we've successfully written the message
-    return https_fn.Response(f"Successfully created player with id {doc_ref.id}.")
+    return https_fn.Response(f"Successfully created [{FirstName} {LastName.uppercase()}] with id {doc_ref.id}.")
+
+
+############################################################################################################
+############################################################################################################
+############ Create Club
+@https_fn.on_request()
+def createClub(req: https_fn.Request) -> https_fn.Response:
+    """Club creation
+    Mandatory: Country
+    Optional: NameClub
+    """
+
+    strCollection1 = "NameGenerator"
+    strCollection2 = "Clubs"
+    firestore_client: google.cloud.firestore.Client = firestore.client()
+
+###### Country
+    Country = req.args.get("Country")
+    if Country is None:
+        return https_fn.Response("Oups... Country parameter is mandatory, we found nothing", status=400)
+    elif Country not in ["France", "Test"]:
+        return https_fn.Response("Oups... Country [{Country}] doesn't exist yet", status=400)
+    strDocument1 = Country
+
+###### Name
+    NameClub = req.args.get("NameClub")
+    FieldCity = "Ville"
+    if NameClub is None:
+        doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2)
+        doc = doc_ref.stream()
+        n_docs = len([doc for doc in doc])
+        while NameClub is None:
+            random_index = random.randint(0, n_docs - 1)
+            # Query and retrieve the random document
+            rand_doc = doc_ref.limit(1).offset(random_index).stream()
+            if rand_doc.exists:
+                data = rand_doc.to_dict()
+                if FieldCity in data:
+                    # Field exists in the document
+                    NameClub = data[FieldCity]
+            #    else:
+            #        print(f"'{FieldCity}' field does not exist in the document.")
+            #else:
+            #    print(f"Document with ID {document_id} does not exist.")
+        NameClub = random.choice(["FC", "FC", "AS", "Union", "Entente"]) + f" {NameClub}"
+
+###### Stadium
+    NameStadium = req.args.get("NameStadium")
+    if NameStadium is None:
+        NameStadium = random.choice(["Stade de la Mairie", "Stade de l'école"])
+
+
+    # Push the new Club into Cloud Firestore using the Firebase Admin SDK.
+    _, doc_ref = firestore_client.collection("Clubs").add(
+        {
+            "Country": Country,
+            "Name": NameClub,
+            "TeamSpirit": 60,
+            "TeamConfidence": 60,
+            "Money": 250000,
+            "Stadium": {
+                "Name", NameStadium,
+                "Seats", 1000
+                #"Seats": {
+                #    "Uncovered": 1000,
+                #    "Covered": 500,
+                #    "VIP": 50
+                #}
+            },
+            "Fans": {
+                "Mood": 60,
+                "Number": 100
+            },
+            "DateCreation": firestore.SERVER_TIMESTAMP
+        }
+    )
+
+
+
+    # Send back a message that we've successfully written the message
+    return https_fn.Response(f"Successfully created [{NameClub}] with id {doc_ref.id}.")
