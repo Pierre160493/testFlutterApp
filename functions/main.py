@@ -174,6 +174,8 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
     """Club creation
     Mandatory: Country
     Optional: NameClub
+
+    http://127.0.0.1:5001/openhattrick/us-central1/createClub/?Country=France&NameClub=FC%20Bordeaux
     """
 
     strCollection1 = "NameGenerator"
@@ -185,13 +187,13 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
     if Country is None:
         return https_fn.Response("Oups... Country parameter is mandatory, we found nothing", status=400)
     elif Country not in ["France", "Test"]:
-        return https_fn.Response("Oups... Country [{Country}] doesn't exist yet", status=400)
+        return https_fn.Response(f"Oups... Country [{Country}] doesn't exist yet", status=400)
     strDocument1 = Country
 
 ###### Name
     NameClub = req.args.get("NameClub")
-    FieldCity = "Ville"
     if NameClub is None:
+        FieldCity = "Ville"
         doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2)
         doc = doc_ref.stream()
         n_docs = len([doc for doc in doc])
@@ -210,11 +212,11 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
             #    print(f"Document with ID {document_id} does not exist.")
         NameClub = random.choice(["FC", "FC", "AS", "Union", "Entente"]) + f" {NameClub}"
 
+    
 ###### Stadium
     NameStadium = req.args.get("NameStadium")
     if NameStadium is None:
         NameStadium = random.choice(["Stade de la Mairie", "Stade de l'école"])
-
 
     # Push the new Club into Cloud Firestore using the Firebase Admin SDK.
     _, doc_ref = firestore_client.collection("Clubs").add(
