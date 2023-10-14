@@ -178,8 +178,6 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
     http://127.0.0.1:5001/openhattrick/us-central1/createClub/?Country=France&NameClub=FC%20Bordeaux
     """
 
-    strCollection1 = "NameGenerator"
-    strCollection2 = "Clubs"
     firestore_client: google.cloud.firestore.Client = firestore.client()
 
 ###### Country
@@ -193,25 +191,34 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
 ###### Name
     NameClub = req.args.get("NameClub")
     if NameClub is None:
-        FieldCity = "Ville"
+        FieldCity = "City"
+        strCollection1 = "NameGenerator"
+        strCollection2 = "Clubs"
         doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2)
-        doc = doc_ref.stream()
-        n_docs = len([doc for doc in doc])
+        docs = doc_ref.get()
+        n_docs = len([doc for doc in docs])
+        # return https_fn.Response(f"Oups... n_docs [{n_docs}] doesn't exist yet", status=400)
         while NameClub is None:
             random_index = random.randint(0, n_docs - 1)
             # Query and retrieve the random document
-            rand_doc = doc_ref.limit(1).offset(random_index).stream()
+            # rand_doc = doc_ref.limit(1).offset(random_index).get()
+            rand_doc = docs[random_index]
+            
             if rand_doc.exists:
+                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
                 data = rand_doc.to_dict()
+                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
                 if FieldCity in data:
                     # Field exists in the document
                     NameClub = data[FieldCity]
-            #    else:
-            #        print(f"'{FieldCity}' field does not exist in the document.")
-            #else:
-            #    print(f"Document with ID {document_id} does not exist.")
+                else:
+                    return https_fn.Response(f"1Oups... n_docs [{random_index}] doesn't exist yet", status=400)
+            else:
+                return https_fn.Response(f"2Oups... n_docs [{random_index}] doesn't exist yet", status=400)
         NameClub = random.choice(["FC", "FC", "AS", "Union", "Entente"]) + f" {NameClub}"
 
+
+    # return https_fn.Response(f"Oups... n_docs [{NameClub}] doesn't exist yet", status=400)
     
 ###### Stadium
     NameStadium = req.args.get("NameStadium")
@@ -227,13 +234,12 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
             "TeamConfidence": 60,
             "Money": 250000,
             "Stadium": {
-                "Name", NameStadium,
-                "Seats", 1000
-                #"Seats": {
-                #    "Uncovered": 1000,
-                #    "Covered": 500,
-                #    "VIP": 50
-                #}
+                "Name": NameStadium,
+                "Seats": {
+                    "Uncovered": 1000,
+                    "Covered": 500,
+                    "VIP": 50
+                }
             },
             "Fans": {
                 "Mood": 60,
