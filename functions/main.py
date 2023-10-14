@@ -191,9 +191,9 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
 ###### Name
     NameClub = req.args.get("NameClub")
     if NameClub is None:
-        FieldCity = "City"
+        FieldCity = "Name"
         strCollection1 = "NameGenerator"
-        strCollection2 = "Clubs"
+        strCollection2 = "Cities"
         doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2)
         docs = doc_ref.get()
         n_docs = len([doc for doc in docs])
