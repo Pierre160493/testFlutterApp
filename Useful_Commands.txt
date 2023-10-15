@@ -6,3 +6,7 @@ Flutter
 
 Firebase
   firebase emulators:start
+
+  firebase emulators:start --import C:\Users\pgranger\git\testFlutterApp\emulator\data --export-on-exit
+
+  firebase deploy --only functions

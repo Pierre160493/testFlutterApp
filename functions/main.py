@@ -166,7 +166,6 @@ def createPlayer(req: https_fn.Request) -> https_fn.Response:
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Successfully created [{FirstName} {LastName.uppercase()}] with id {doc_ref.id}.")
 
-def createPlayer(FirstName, LastName, Age, IdClub):
 
 ############################################################################################################
 ############################################################################################################
@@ -208,20 +207,11 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
             rand_doc = docs[random_index]
             
             if rand_doc.exists:
-                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
                 data = rand_doc.to_dict()
-                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
-                if FieldCity in data:
-                    # Field exists in the document
+                if FieldCity in data: # Field exists in the document
                     NameClub = data[FieldCity]
-                else:
-                    return https_fn.Response(f"1Oups... n_docs [{random_index}] doesn't exist yet", status=400)
-            else:
-                return https_fn.Response(f"2Oups... n_docs [{random_index}] doesn't exist yet", status=400)
+
         NameClub = random.choice(["FC", "FC", "AS", "Union", "Entente"]) + f" {NameClub}"
-
-
-    # return https_fn.Response(f"Oups... n_docs [{NameClub}] doesn't exist yet", status=400)
     
 ###### Stadium
     NameStadium = req.args.get("NameStadium")
@@ -253,6 +243,8 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
         }
     )
     IdClub = doc_ref.id #Id of the new created club
+
+    #return https_fn.Response(f"Successfully created [{NameClub}] with id {doc_ref.id}.")
 
 ###### Create Players
     strCollection1 = "NameGenerator"
@@ -291,67 +283,71 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
                     # Field exists in the document
                     LastName = data[FieldLastName]
         
+        #return https_fn.Response(f"Player =  [{FirstName} {LastName}].")
+
         if i < 2: #2 GoalKeepers
             Stats = {
-                "GoalKeeping": 30 + random() * 20,
-                "Defense": 15 + random() * 10,
-                "Passing": 15 + random() * 10,
-                "PlayMaking": 10 + random() * 10,
-                "Winger": 10 + random() * 10,
-                "Scoring": 10 + random() * 10,
-                "SetPieces": 20 + random() * 20,
+                "GoalKeeping": 30 + random.uniform(0, 20),
+                "Defense": 15 + random.uniform(0, 10),
+                "Passing": 15 + random.uniform(0, 10),
+                "PlayMaking": 10 + random.uniform(0, 10),
+                "Winger": 10 + random.uniform(0, 10),
+                "Scoring": 10 + random.uniform(0, 10),
+                "SetPieces": 20 + random.uniform(0, 20),
             }
         elif i < 6: # 4 Central Defenders
             Stats = {
-                "GoalKeeping": 0 + random() * 10,
-                "Defense": 30 + random() * 20,
-                "Passing": 20 + random() * 20,
-                "PlayMaking": 10 + random() * 10,
-                "Winger": 10 + random() * 10,
-                "Scoring": 10 + random() * 10,
-                "SetPieces": 0 + random() * 10,
+                "GoalKeeping": 0 + random.uniform(0, 10),
+                "Defense": 30 + random.uniform(0, 20),
+                "Passing": 20 + random.uniform(0, 20),
+                "PlayMaking": 10 + random.uniform(0, 10),
+                "Winger": 10 + random.uniform(0, 10),
+                "Scoring": 10 + random.uniform(0, 10),
+                "SetPieces": 0 + random.uniform(0, 10),
             }
         elif i < 10: # 4 Backs
             Stats = {
-                "GoalKeeping": 0 + random() * 10,
-                "Defense": 25 + random() * 20,
-                "Passing": 20 + random() * 10,
-                "PlayMaking": 10 + random() * 10,
-                "Winger": 25 + random() * 20,
-                "Scoring": 10 + random() * 10,
-                "SetPieces": 10 + random() * 10,
+                "GoalKeeping": 0 + random.uniform(0, 10),
+                "Defense": 25 + random.uniform(0, 20),
+                "Passing": 20 + random.uniform(0, 10),
+                "PlayMaking": 10 + random.uniform(0, 10),
+                "Winger": 25 + random.uniform(0, 20),
+                "Scoring": 10 + random.uniform(0, 10),
+                "SetPieces": 10 + random.uniform(0, 10),
             }
         elif i < 14: # 4 Midfielders
             Stats = {
-                "GoalKeeping": 0 + random() * 10,
-                "Defense": 10 + random() * 10,
-                "Passing": 20 + random() * 20,
-                "PlayMaking": 20 + random() * 20,
-                "Winger": 10 + random() * 10,
-                "Scoring": 10 + random() * 10,
-                "SetPieces": 10 + random() * 10,
+                "GoalKeeping": 0 + random.uniform(0, 10),
+                "Defense": 10 + random.uniform(0, 10),
+                "Passing": 20 + random.uniform(0, 20),
+                "PlayMaking": 20 + random.uniform(0, 20),
+                "Winger": 10 + random.uniform(0, 10),
+                "Scoring": 10 + random.uniform(0, 10),
+                "SetPieces": 10 + random.uniform(0, 10),
             }
         elif i < 18: # 4 Wingers
             Stats = {
-                "GoalKeeping": 0 + random() * 10,
-                "Defense": 10 + random() * 10,
-                "Passing": 20 + random() * 20,
-                "PlayMaking": 10 + random() * 10,
-                "Winger": 30 + random() * 20,
-                "Scoring": 10 + random() * 10,
-                "SetPieces": 10 + random() * 10,
+                "GoalKeeping": 0 + random.uniform(0, 10),
+                "Defense": 10 + random.uniform(0, 10),
+                "Passing": 20 + random.uniform(0, 20),
+                "PlayMaking": 10 + random.uniform(0, 10),
+                "Winger": 30 + random.uniform(0, 20),
+                "Scoring": 10 + random.uniform(0, 10),
+                "SetPieces": 10 + random.uniform(0, 10),
             }
         else: # 5 Strikers
             Stats = {
-                "GoalKeeping": 0 + random() * 10,
-                "Defense": 10 + random() * 10,
-                "Passing": 20 + random() * 20,
-                "PlayMaking": 10 + random() * 10,
-                "Winger": 10 + random() * 10,
-                "Scoring": 30 + random() * 20,
-                "SetPieces": 10 + random() * 10,
+                "GoalKeeping": 0 + random.uniform(0, 10),
+                "Defense": 10 + random.uniform(0, 10),
+                "Passing": 20 + random.uniform(0, 20),
+                "PlayMaking": 10 + random.uniform(0, 10),
+                "Winger": 10 + random.uniform(0, 10),
+                "Scoring": 30 + random.uniform(0, 20),
+                "SetPieces": 10 + random.uniform(0, 10),
             }
         
+        #return https_fn.Response(f"Player =  [{FirstName} {LastName}] {Stats}")
+
         Age = random.uniform(17, 35) # Players age randomly generated
         # 1 game year = 16 real life weeks = 112 real life days
         DateBirth = datetime.now()# - datetime()
@@ -378,8 +374,10 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
                 }
             }
         )
-
-    _, doc_ref = firestore_client.collection("Players").add(lisPlayers)
+        
+    for player in lisPlayers:
+        _, doc_ref = firestore_client.collection("Players").add(player)
+        #return https_fn.Response(f"Player =  [{FirstName} {LastName}] {Stats}")
 
     # Send back a message that we've successfully written the message
     return https_fn.Response(f"Successfully created [{NameClub}] with id {doc_ref.id}.")
