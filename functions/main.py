@@ -287,63 +287,63 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
 
         if i < 2: #2 GoalKeepers
             Stats = {
-                "GoalKeeping": 30 + random.uniform(0, 20),
-                "Defense": 15 + random.uniform(0, 10),
-                "Passing": 15 + random.uniform(0, 10),
-                "PlayMaking": 10 + random.uniform(0, 10),
-                "Winger": 10 + random.uniform(0, 10),
-                "Scoring": 10 + random.uniform(0, 10),
-                "SetPieces": 20 + random.uniform(0, 20),
+                "GoalKeeping": random.uniform(30, 50),
+                "Defense": random.uniform(0, 20),
+                "Passing": random.uniform(0, 20),
+                "PlayMaking": random.uniform(0, 10),
+                "Winger": random.uniform(0, 10),
+                "Scoring": random.uniform(0, 10),
+                "SetPieces": random.uniform(20, 50),
             }
         elif i < 6: # 4 Central Defenders
             Stats = {
-                "GoalKeeping": 0 + random.uniform(0, 10),
-                "Defense": 30 + random.uniform(0, 20),
-                "Passing": 20 + random.uniform(0, 20),
-                "PlayMaking": 10 + random.uniform(0, 10),
-                "Winger": 10 + random.uniform(0, 10),
-                "Scoring": 10 + random.uniform(0, 10),
-                "SetPieces": 0 + random.uniform(0, 10),
+                "GoalKeeping": random.uniform(0, 10),
+                "Defense": random.uniform(30, 50),
+                "Passing": random.uniform(10, 40),
+                "PlayMaking": random.uniform(0, 20),
+                "Winger": random.uniform(0, 10),
+                "Scoring": random.uniform(0, 10),
+                "SetPieces": random.uniform(0, 10),
             }
         elif i < 10: # 4 Backs
             Stats = {
-                "GoalKeeping": 0 + random.uniform(0, 10),
-                "Defense": 25 + random.uniform(0, 20),
-                "Passing": 20 + random.uniform(0, 10),
-                "PlayMaking": 10 + random.uniform(0, 10),
-                "Winger": 25 + random.uniform(0, 20),
-                "Scoring": 10 + random.uniform(0, 10),
-                "SetPieces": 10 + random.uniform(0, 10),
+                "GoalKeeping": random.uniform(0, 10),
+                "Defense": random.uniform(20, 50),
+                "Passing": random.uniform(10, 30),
+                "PlayMaking": random.uniform(0, 20),
+                "Winger": random.uniform(30, 50),
+                "Scoring": random.uniform(0, 10),
+                "SetPieces": random.uniform(0, 20),
             }
         elif i < 14: # 4 Midfielders
             Stats = {
-                "GoalKeeping": 0 + random.uniform(0, 10),
-                "Defense": 10 + random.uniform(0, 10),
-                "Passing": 20 + random.uniform(0, 20),
-                "PlayMaking": 20 + random.uniform(0, 20),
-                "Winger": 10 + random.uniform(0, 10),
-                "Scoring": 10 + random.uniform(0, 10),
-                "SetPieces": 10 + random.uniform(0, 10),
+                "GoalKeeping": random.uniform(0, 10),
+                "Defense": random.uniform(0, 30),
+                "Passing": random.uniform(10, 40),
+                "PlayMaking": random.uniform(20, 50),
+                "Winger": random.uniform(0, 10),
+                "Scoring": random.uniform(0, 10),
+                "SetPieces": random.uniform(0, 20),
             }
         elif i < 18: # 4 Wingers
             Stats = {
-                "GoalKeeping": 0 + random.uniform(0, 10),
-                "Defense": 10 + random.uniform(0, 10),
-                "Passing": 20 + random.uniform(0, 20),
-                "PlayMaking": 10 + random.uniform(0, 10),
-                "Winger": 30 + random.uniform(0, 20),
-                "Scoring": 10 + random.uniform(0, 10),
-                "SetPieces": 10 + random.uniform(0, 10),
+                "GoalKeeping": random.uniform(0, 10),
+                "Defense": random.uniform(0, 20),
+                "Passing": random.uniform(10, 30),
+                "PlayMaking": random.uniform(10, 30),
+                "Winger": random.uniform(20, 50),
+                "Scoring": random.uniform(0, 20),
+                "SetPieces": random.uniform(0, 20),
             }
         else: # 5 Strikers
             Stats = {
-                "GoalKeeping": 0 + random.uniform(0, 10),
-                "Defense": 10 + random.uniform(0, 10),
-                "Passing": 20 + random.uniform(0, 20),
-                "PlayMaking": 10 + random.uniform(0, 10),
-                "Winger": 10 + random.uniform(0, 10),
-                "Scoring": 30 + random.uniform(0, 20),
-                "SetPieces": 10 + random.uniform(0, 10),
+                "GoalKeeping": random.uniform(0, 10),
+                "Defense": random.uniform(0, 10),
+                "Passing": random.uniform(10, 40),
+                "PlayMaking": random.uniform(10, 30),
+                "Winger": random.uniform(0, 20),
+                "Scoring": random.uniform(20, 50),
+                "SetPieces": random.uniform(0, 20),
             }
         
         #return https_fn.Response(f"Player =  [{FirstName} {LastName}] {Stats}")
