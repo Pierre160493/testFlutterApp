@@ -2,8 +2,9 @@
 # To get started, simply uncomment the below code or create your own.
 # Deploy with `firebase deploy`
 
+import math
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from firebase_functions import firestore_fn, https_fn
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
@@ -216,7 +217,9 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
 ###### Stadium
     NameStadium = req.args.get("NameStadium")
     if NameStadium is None:
-        NameStadium = random.choice(["Stade de la Mairie", "Stade de l'école"])
+        NameStadium = random.choice(["Stade de la Mairie", "Stade de l'école", "Stade de la République", "Stade de la Liberté", "STade Régionale", "Stade Départemental"])
+
+    DateCreation = firestore.SERVER_TIMESTAMP #Creation Date and Time of the club
 
     # Push the new Club into Cloud Firestore using the Firebase Admin SDK.
     _, doc_ref = firestore_client.collection("Clubs").add(
@@ -239,7 +242,7 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
                 "Mood": 60,
                 "Number": 100
             },
-            "DateCreation": firestore.SERVER_TIMESTAMP
+            "DateCreation": DateCreation
         }
     )
     IdClub = doc_ref.id #Id of the new created club
@@ -345,39 +348,60 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
                 "Scoring": random.uniform(20, 50),
                 "SetPieces": random.uniform(0, 20),
             }
-        
-        #return https_fn.Response(f"Player =  [{FirstName} {LastName}] {Stats}")
 
-        Age = random.uniform(17, 35) # Players age randomly generated
-        # 1 game year = 16 real life weeks = 112 real life days
-        DateBirth = datetime.now()# - datetime()
+        Salary = 500.0
+        StatsAverage = 0.0
+
+        for Stat in Stats.values():
+            Salary += Stat
+            StatsAverage += Stat
+        
+        StatsAverage = StatsAverage / 7
+
+        DateBirth = datetime.now() - timedelta(days= int(random.uniform(17, 35) * 112)) # (1 game season = 16 real life weeks = 112 real life days)
+
+        # return https_fn.Response(f"Player =  [{FirstName} {LastName}] {DateBirth}")
 
         lisPlayers.append(
             {
                 "FirstName": FirstName,
                 "LastName": LastName,
                 "Country": Country,
-                "Age": Age,
                 "DateBirth": DateBirth,
                 "Club": {
                     "IdClub": IdClub,
                     "Name": NameClub,
-                    "DateStart": firestore.SERVER_TIMESTAMP
+                    "DateStart": DateCreation,
+                    "isFormed": True
                 },
-                "Salary": 500,
+                "Salary": Salary,
+                "StatAverage": StatsAverage,
                 "Stats": Stats,
                 "OtherStats": {
                     "Experience": 60,
-                    "Loyalty": 60,
+                    "Loyalty": 100,
                     "Stamina": 60,
                     "Form": 60
                 }
             }
         )
-        
+
     for player in lisPlayers:
         _, doc_ref = firestore_client.collection("Players").add(player)
+
+        _, doc_ref = firestore_client.collection("Players").document(doc_ref.id).collection("History").add(
+            {
+                "Event": "Player generated at club creation",
+                "Date": DateCreation,
+                "Club": {
+                    "Id": IdClub,
+                    "Name": NameClub
+                }
+            }
+        )
         #return https_fn.Response(f"Player =  [{FirstName} {LastName}] {Stats}")
 
+
+
     # Send back a message that we've successfully written the message
-    return https_fn.Response(f"Successfully created [{NameClub}] with id {doc_ref.id}.")
+    return https_fn.Response(f"Successfully created [{NameClub}] with id {IdClub}.")
