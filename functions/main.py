@@ -1,9 +1,7 @@
-# Welcome to Cloud Functions for Firebase for Python!
-# To get started, simply uncomment the below code or create your own.
-# Deploy with `firebase deploy`
-
 import math
 import random
+from code.classes.stats import Stats
+from code.classes.player import Player
 from datetime import datetime, timedelta
 from firebase_functions import firestore_fn, https_fn
 from firebase_admin import initialize_app, firestore
@@ -250,141 +248,121 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
     #return https_fn.Response(f"Successfully created [{NameClub}] with id {doc_ref.id}.")
 
 ###### Create Players
-    strCollection1 = "NameGenerator"
-    strCollection2 = "Players"
+    strCollection1 = "NameGenerator" #First Collection where we will search for some data
+    strCollection2 = "Players" #Second document where we will search for some data
     doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2) #NameGenerator/France/Players
-    docs = doc_ref.get()
-    n_docs = len([doc for doc in docs])
+    docs = doc_ref.get() # Get the documents of the following path: NameGenerator/France/Players/
+    n_docs = len([doc for doc in docs]) #Get the number of document
 
-    lisPlayers = []
-    NumberOfPlayers = 23 #Number of players to create for this new club
+    lisPlayers = [] #List of all players
+    lisPlayersPosition= ["GoalKeeper"]*2+["Defender"]*4+["BackWinger"]*4+["MidFielder"]*4+["Winger"]*4+["Scorer"]*4
 ### Name Generation
-    for i in range(NumberOfPlayers):
-        FirstName = None
-        FieldFirstName = "FirstName"
-        while FirstName is None:
-            random_index = random.randint(0, n_docs - 1)
-            rand_doc = docs[random_index]
-            if rand_doc.exists:
-                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
-                data = rand_doc.to_dict()
-                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
-                if FieldFirstName in data:
-                    # Field exists in the document
-                    FirstName = data[FieldFirstName]
-
-        LastName = None
-        FieldLastName = "LastName"
-        while LastName is None:
-            random_index = random.randint(0, n_docs - 1)
-            rand_doc = docs[random_index]
-            if rand_doc.exists:
-                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
-                data = rand_doc.to_dict()
-                # return https_fn.Response(f"Oups... n_docs [{random_index}] doesn't exist yet", status=400)
-                if FieldLastName in data:
-                    # Field exists in the document
-                    LastName = data[FieldLastName]
+    for position in lisPlayersPosition:
+      NamePlayer = {"FirstName": None,
+                   "LastName": None}
+      for key in NamePlayer: #Loop through the two elements of key pair
+        while NamePlayer[key] is None:
+          rand_doc = docs[random.randint(0, n_docs - 1)]
+          if rand_doc.exists:
+            data = rand_doc.to_dict() #Fetch the data
+            if key in data: #Check if the key exists in the data
+              NamePlayer[key] = data[key] #If it exists, add the value to the key pair
         
-        #return https_fn.Response(f"Player =  [{FirstName} {LastName}].")
-
-        if i < 2: #2 GoalKeepers
-            Stats = {
-                "GoalKeeping": random.uniform(30, 50),
-                "Defense": random.uniform(0, 20),
-                "Passing": random.uniform(0, 20),
-                "PlayMaking": random.uniform(0, 10),
-                "Winger": random.uniform(0, 10),
-                "Scoring": random.uniform(0, 10),
-                "SetPieces": random.uniform(20, 50),
-            }
-        elif i < 6: # 4 Central Defenders
-            Stats = {
-                "GoalKeeping": random.uniform(0, 10),
-                "Defense": random.uniform(30, 50),
-                "Passing": random.uniform(10, 40),
-                "PlayMaking": random.uniform(0, 20),
-                "Winger": random.uniform(0, 10),
-                "Scoring": random.uniform(0, 10),
-                "SetPieces": random.uniform(0, 10),
-            }
-        elif i < 10: # 4 Backs
-            Stats = {
-                "GoalKeeping": random.uniform(0, 10),
-                "Defense": random.uniform(20, 50),
-                "Passing": random.uniform(10, 30),
-                "PlayMaking": random.uniform(0, 20),
-                "Winger": random.uniform(30, 50),
-                "Scoring": random.uniform(0, 10),
-                "SetPieces": random.uniform(0, 20),
-            }
-        elif i < 14: # 4 Midfielders
-            Stats = {
-                "GoalKeeping": random.uniform(0, 10),
-                "Defense": random.uniform(0, 30),
-                "Passing": random.uniform(10, 40),
-                "PlayMaking": random.uniform(20, 50),
-                "Winger": random.uniform(0, 10),
-                "Scoring": random.uniform(0, 10),
-                "SetPieces": random.uniform(0, 20),
-            }
-        elif i < 18: # 4 Wingers
-            Stats = {
-                "GoalKeeping": random.uniform(0, 10),
-                "Defense": random.uniform(0, 20),
-                "Passing": random.uniform(10, 30),
-                "PlayMaking": random.uniform(10, 30),
-                "Winger": random.uniform(20, 50),
-                "Scoring": random.uniform(0, 20),
-                "SetPieces": random.uniform(0, 20),
-            }
-        else: # 5 Strikers
-            Stats = {
-                "GoalKeeping": random.uniform(0, 10),
-                "Defense": random.uniform(0, 10),
-                "Passing": random.uniform(10, 40),
-                "PlayMaking": random.uniform(10, 30),
-                "Winger": random.uniform(0, 20),
-                "Scoring": random.uniform(20, 50),
-                "SetPieces": random.uniform(0, 20),
-            }
-
-        Salary = 500.0
-        StatsAverage = 0.0
-
-        for Stat in Stats.values():
-            Salary += Stat
-            StatsAverage += Stat
+      return https_fn.Response(f"Player = [{NamePlayer['FirstName']} {NamePlayer['LastName']}].")
+      
+      if position == "GoalKeeper": #2 GoalKeepers
+        Stats = {
+          "GoalKeeping": random.uniform(30, 50),
+          "Defense": random.uniform(0, 20),
+          "Passing": random.uniform(0, 20),
+          "PlayMaking": random.uniform(0, 10),
+          "Winger": random.uniform(0, 10),
+          "Scoring": random.uniform(0, 10),
+          "SetPieces": random.uniform(20, 50),
+        }
+      elif position == "Defender": # 4 Central Defenders
+        Stats = {
+          "GoalKeeping": random.uniform(0, 10),
+          "Defense": random.uniform(30, 50),
+          "Passing": random.uniform(10, 40),
+          "PlayMaking": random.uniform(0, 20),
+          "Winger": random.uniform(0, 10),
+          "Scoring": random.uniform(0, 10),
+          "SetPieces": random.uniform(0, 10),
+        }
+      elif position == "BackWinger": # 4 Backs
+        Stats = {
+          "GoalKeeping": random.uniform(0, 10),
+          "Defense": random.uniform(20, 50),
+          "Passing": random.uniform(10, 30),
+          "PlayMaking": random.uniform(0, 20),
+          "Winger": random.uniform(30, 50),
+          "Scoring": random.uniform(0, 10),
+          "SetPieces": random.uniform(0, 20),
+        }
+      elif position == "MidFielder": # 4 Midfielders
+        Stats = {
+          "GoalKeeping": random.uniform(0, 10),
+          "Defense": random.uniform(0, 30),
+          "Passing": random.uniform(10, 40),
+          "PlayMaking": random.uniform(20, 50),
+          "Winger": random.uniform(0, 10),
+          "Scoring": random.uniform(0, 10),
+          "SetPieces": random.uniform(0, 20),
+        }
+      elif position == "Winger": # 4 Wingers
+        Stats = {
+          "GoalKeeping": random.uniform(0, 10),
+          "Defense": random.uniform(0, 20),
+          "Passing": random.uniform(10, 30),
+          "PlayMaking": random.uniform(10, 30),
+          "Winger": random.uniform(20, 50),
+          "Scoring": random.uniform(0, 20),
+          "SetPieces": random.uniform(0, 20),
+        }
+      elif position == "Scorer": # 4 Strikers
+        Stats = {
+          "GoalKeeping": random.uniform(0, 10),
+          "Defense": random.uniform(0, 10),
+          "Passing": random.uniform(10, 40),
+          "PlayMaking": random.uniform(10, 30),
+          "Winger": random.uniform(0, 20),
+          "Scoring": random.uniform(20, 50),
+          "SetPieces": random.uniform(0, 20),
+        }
         
-        StatsAverage = StatsAverage / 7
-
-        DateBirth = datetime.now() - timedelta(days= int(random.uniform(17, 35) * 112)) # (1 game season = 16 real life weeks = 112 real life days)
-
-        # return https_fn.Response(f"Player =  [{FirstName} {LastName}] {DateBirth}")
-
-        lisPlayers.append(
-            {
-                "FirstName": FirstName,
-                "LastName": LastName,
-                "Country": Country,
-                "DateBirth": DateBirth,
-                "Club": {
-                    "IdClub": IdClub,
-                    "Name": NameClub,
-                    "DateStart": DateCreation,
-                    "isFormed": True
-                },
-                "Salary": Salary,
-                "StatAverage": StatsAverage,
-                "Stats": Stats,
-                "OtherStats": {
-                    "Experience": 60,
-                    "Loyalty": 100,
-                    "Stamina": 60,
-                    "Form": 60
-                }
-            }
-        )
+      Salary = 500.0
+      StatsAverage = 0.0
+      for Stat in Stats.values():
+          Salary += Stat
+          StatsAverage += Stat
+      
+      StatsAverage = StatsAverage / 7
+      DateBirth = datetime.now() - timedelta(days= int(random.uniform(17, 35) * 112)) # (1 game season = 16 real life weeks = 112 real life days)
+      # return https_fn.Response(f"Player =  [{FirstName} {LastName}] {DateBirth}")
+      lisPlayers.append(
+          {
+              "FirstName": FirstName,
+              "LastName": LastName,
+              "Country": Country,
+              "DateBirth": DateBirth,
+              "Club": {
+                  "IdClub": IdClub,
+                  "Name": NameClub,
+                  "DateStart": DateCreation,
+                  "isFormedHere": True
+              },
+              "Salary": Salary,
+              "StatAverage": StatsAverage,
+              "Stats": Stats,
+              "OtherStats": {
+                  "Experience": 60,
+                  "Loyalty": 100,
+                  "Stamina": 60,
+                  "Form": 60
+              }
+          }
+      )
 
     for player in lisPlayers:
         _, doc_ref = firestore_client.collection("Players").add(player)
@@ -401,7 +379,4 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
         )
         #return https_fn.Response(f"Player =  [{FirstName} {LastName}] {Stats}")
 
-
-
-    # Send back a message that we've successfully written the message
     return https_fn.Response(f"Successfully created [{NameClub}] with id {IdClub}.")
