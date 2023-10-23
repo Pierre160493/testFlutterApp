@@ -11,6 +11,7 @@ firebase emulators:start
 
 ### Start emulators with parameters to have basic data in the generated local database
 firebase emulators:start --import C:\Users\pgranger\git\testFlutterApp\emulator\data --export-on-exit
+firebase emulators:start --import C:\Users\pgranger\git\testFlutterApp\emulator\data
 
 ### Deploy project on server
 firebase deploy --only functions

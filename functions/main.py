@@ -252,10 +252,10 @@ def createClub(req: https_fn.Request) -> https_fn.Response:
     strCollection2 = "Players" #Second document where we will search for some data
     doc_ref = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2) #NameGenerator/France/Players
     docs = doc_ref.get() # Get the documents of the following path: NameGenerator/France/Players/
-    n_docs = len([doc for doc in docs]) #Get the number of document
-
-    lisPlayers = [] #List of all players
-    lisPlayersPosition= ["GoalKeeper"]*2+["Defender"]*4+["BackWinger"]*4+["MidFielder"]*4+["Winger"]*4+["Scorer"]*4
+    #docs = firestore_client.collection(strCollection1).document(strDocument1).collection(strCollection2).get() # Get the documents of the following path: NameGenerator/France/Players/
+    lisPositions= ["GoalKeeper"]*2+["Defender"]*4+["BackWinger"]*4+["MidFielder"]*4+["Winger"]*4+["Scorer"]*4
+    lisPlayers = Players.createPlayers(Country= Country, lisPositions= lisPositions) #List of all players
+    
 ### Name Generation
     for position in lisPlayersPosition:
       NamePlayer = {"FirstName": None,

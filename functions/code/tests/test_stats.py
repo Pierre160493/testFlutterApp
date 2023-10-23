@@ -1,7 +1,7 @@
 import unittest
 import json
 from icecream import ic
-from classes.stats import Stats
+from classes.stats import clsStats
 
 
 
@@ -9,28 +9,16 @@ from classes.stats import Stats
 ############ Tests on class Stats
 class TestStats(unittest.TestCase):
 
-  stats = Stats()
-  stats0 = Stats(GoalKeeping=0,
-                 Defending=0,
-                 Passing=0,
-                 PlayMaking=0,
-                 Winging=0,
-                 Scoring=0,
-                 SetPiecing=0)
-  stats100 = Stats(GoalKeeping=100,
-                   Defending=100,
-                   Passing=100,
-                   PlayMaking=100,
-                   Winging=100,
-                   Scoring=100,
-                   SetPiecing=100)
-  statsGoalKeeper = Stats(GoalKeeping=100,
-                          Defending=50,
-                          Passing=50,
-                          PlayMaking=50,
-                          Winging=50,
-                          Scoring=50,
-                          SetPiecing=50)
+  stats = clsStats()
+  stats0 = clsStats(GoalKeeping=0, Defending=0, Passing=0, PlayMaking=0, Winging=0, Scoring=0, SetPiecing=0)
+  stats100 = clsStats(GoalKeeping=100, Defending=100, Passing=100, PlayMaking=100, Winging=100, Scoring=100, SetPiecing=100)
+
+  statsPerfectGoalKeeper = clsStats(GoalKeeping=30.0, Defending=10.0, Passing=20.0, PlayMaking=10.0, Winging=10.0, Scoring=10.0, SetPiecing=20.0)
+  statsPerfectDefender   = clsStats(GoalKeeping=10.0, Defending=30.0, Passing=20.0, PlayMaking=20.0, Winging=10.0, Scoring=10.0, SetPiecing=10.0)
+  statsPerfectBackWinger = clsStats(GoalKeeping=10.0, Defending=30.0, Passing=20.0, PlayMaking=10.0, Winging=20.0, Scoring=10.0, SetPiecing=10.0)
+  statsPerfectMidFielder = clsStats(GoalKeeping=10.0, Defending=15.0, Passing=20.0, PlayMaking=30.0, Winging=10.0, Scoring=15.0, SetPiecing=10.0)
+  statsPerfectWinger     = clsStats(GoalKeeping=10.0, Defending=10.0, Passing=20.0, PlayMaking=20.0, Winging=30.0, Scoring=10.0, SetPiecing=10.0)
+  statsPerfectScorer     = clsStats(GoalKeeping=10.0, Defending=10.0, Passing=20.0, PlayMaking=20.0, Winging=10.0, Scoring=30.0, SetPiecing=10.0)
 
 ########################################################################
 ############ Tests Methods
@@ -82,9 +70,24 @@ class TestStats(unittest.TestCase):
     self.assertTrue("When returning best position of a player, Position must be None or [ALL], Position was: [GoalKeeper]" in str(context.exception))
 
   def test_AvgCalculation_BestPosition_GoalKeeper(self):
-    self.assertEqual(self.statsGoalKeeper.AvgScore(Position= "All", returnPos= True), "GoalKeeper")
+    self.assertEqual(self.statsPerfectGoalKeeper.AvgScore(Position= "All", returnPos= True), "GoalKeeper")
   def test_AvgCalculation_BestPosition_GoalKeeper2(self):
-    self.assertEqual(self.statsGoalKeeper.AvgScore(returnPos= True), "GoalKeeper")
+    self.assertEqual(self.statsPerfectGoalKeeper.AvgScore(returnPos= True), "GoalKeeper")
+
+###### Tests on stats generation
+  def test_GenerateStats_PerfectGoalKeeper(self):
+    # ic(clsStats.generatePlayerStats(Position= "GoalKeeper", isPerfect= True).toJSON())
+    self.assertEqual(clsStats.generatePlayerStats(Position= "GoalKeeper", isPerfect= True).toJSON(), self.statsPerfectGoalKeeper.toJSON())
+  def test_GenerateStats_PerfectDefender(self):
+    self.assertEqual(clsStats.generatePlayerStats(Position= "Defender", isPerfect= True).toJSON(), self.statsPerfectDefender.toJSON())
+  def test_GenerateStats_PerfectBackWinger(self):
+    self.assertEqual(clsStats.generatePlayerStats(Position= "BackWinger", isPerfect= True).toJSON(), self.statsPerfectBackWinger.toJSON())
+  def test_GenerateStats_PerfectMidFielder(self):
+    self.assertEqual(clsStats.generatePlayerStats(Position= "MidFielder", isPerfect= True).toJSON(), self.statsPerfectMidFielder.toJSON())
+  def test_GenerateStats_PerfectWinger(self):
+    self.assertEqual(clsStats.generatePlayerStats(Position= "Winger", isPerfect= True).toJSON(), self.statsPerfectWinger.toJSON())
+  def test_GenerateStats_PerfectStriker(self):
+    self.assertEqual(clsStats.generatePlayerStats(Position= "Scorer", isPerfect= True).toJSON(), self.statsPerfectScorer.toJSON())
 
 ###### Tests on strings
   def test_str(self):
