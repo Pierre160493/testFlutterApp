@@ -16,6 +16,9 @@ firebase emulators:start --import C:\Users\pgranger\git\testFlutterApp\emulator\
 ### Deploy project on server
 firebase deploy --only functions
 
+## Python venv
+### Activate venv
+.\venv\Scripts\Activate
 
 ## Python unittest
 ### Test

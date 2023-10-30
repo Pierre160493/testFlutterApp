@@ -43,7 +43,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .firebase/hosting.YnVpbGQ.cache
-.firebase/hosting.YnVpbGQ.cache
-.firebase/hosting.YnVpbGQ.cache
-.firebase/hosting.YnVpbGQ.cache
-.firebase/hosting.YnVpbGQ.cache
+emulator/data/firestore_export/firestore_export.overall_export_metadata
+emulator/data/firestore_export/all_namespaces/all_kinds/all_namespaces_all_kinds.export_metadata
+emulator/data/firestore_export/all_namespaces/all_kinds/output-0
